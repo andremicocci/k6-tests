@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: load-test-mock
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: load-test-mock
+  template:
+    metadata:
+      labels:
+        app: load-test-mock
+    spec:
+      containers:
+      - name: load-test-mock
+        image: load-test-mock:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 3000
+        resources:
+          limits:
+            cpu: "500m"
+            memory: "512Mi"
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: load-test-mock-svc
+spec:
+  type: ClusterIP
+  selector:
+    app: load-test-mock
+  ports:
+  - port: 80
+    targetPort: 3000
